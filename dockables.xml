@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE DOCKABLES SYSTEM "dockables.dtd">
+<!-- A simple dockable -->
+<DOCKABLES>
+	<DOCKABLE NAME="journaltitleseditor">
+		new journaltitles.JournalTitlesPluginPanel(view);
+	</DOCKABLE>
+</DOCKABLES>

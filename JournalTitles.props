@@ -1,0 +1,29 @@
+#--------------------------------------
+# Properties for Journal Titles Plugin.
+#--------------------------------------
+
+plugin.journaltitles.JournalTitlesPlugin.name=Journal Titles Editor
+plugin.journaltitles.JournalTitlesPlugin.author=Zigmas Kry\u017Eius
+plugin.journaltitles.JournalTitlesPlugin.version=0.9.5
+plugin.journaltitles.JournalTitlesPlugin.activate=defer
+
+# dependencies
+plugin.journaltitles.JournalTitlesPlugin.depend.0=jdk 1.8
+plugin.journaltitles.JournalTitlesPlugin.depend.1=jedit 05.01.00.00
+
+# docs
+plugin.journaltitles.JournalTitlesPlugin.docs=docs/index.html
+plugin.journaltitles.JournalTitlesPlugin.description=Editing journal titles: abbreviated and adopted form.
+
+# title for DockableWindowManager
+journaltitleseditor.title=Journal Titles 2019.10.03
+
+# menu settings
+plugin.journaltitles.JournalTitlesPlugin.menu-item=journaltitleseditor
+journaltitleseditor.label=Journal Titles Editor
+
+# Options 
+plugin.journaltitles.JournalTitlesPlugin.option-pane=journaltitles
+options.journaltitles.label=Journal Titles Editor
+options.journaltitles.code=new journaltitles.JournalTitlesOptionPane();
+

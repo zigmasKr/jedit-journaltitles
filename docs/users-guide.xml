@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<book>
+	<bookinfo>
+		<title>JournalTitles Plugin</title>
+		<author>
+			<firstname>Zigmantas</firstname><surname>Kry&#382;ius</surname>
+		</author>
+	</bookinfo>
+	<chapter id="overview"><title>Overview</title>
+		<para>
+			The purpose of the plugin is to help editing journal titles in the LaTeX
+			coded scientific papers, following requirements of major scientific publishers.
+			This editing mainly means to put the journal titles in a particular adopted
+			abbreviated form.
+		</para>
+		<para>
+			The plugin is applicable in a particular in-house working environment which
+			implies that a specified LaTeX style is used for bibliography entries.
+		</para>
+	</chapter>
+	<chapter id="features"><title>Features</title>
+		<para>
+			The plugin makes use of lists of adopted abbreviated journal titles. 
+			It allows, in course of working, to create a 'user' list of abbreviated
+			journal titles, when some 'input' journal title is not found in the 
+			adopted list.
+		</para>
+	</chapter>
+	<chapter id="lists"><title>Lists of adopted abbreviated journal titles</title>
+		<para>
+			The plugin makes use of lists of adopted abbreviated journal titles. 
+			It allows, in course of working, to create a 'user' list of abbreviated
+			journal titles, when some 'input' journal title is not found in the 
+			adopted list.
+		</para>
+		<para>
+			The basic lists of adopted abbreviated journal titles are in their legacy form used in the in-house 
+			working environment. 
+			This form is kept for possibility to follow the updates of these lists in  
+			the in-house environment. 
+		</para>
+	</chapter>
+	<chapter id="disclaimer"><title>Disclaimer</title>
+		<para>
+			The detailed description or manual on this plugin is not included in this help.
+		</para>
+		<para>
+			The plugin has been in use since the year 2008, in its 'rough' but working shape.
+			With this version it is put in a more decent and complete plugin's form. 
+		</para>
+	</chapter>
+	<chapter id="contacts"><title>Contacts</title>
+		<para>
+		Author's contact: <email id="email">zigmas.kr@gmail.com</email>.
+		</para>
+  </chapter>
+</book>
