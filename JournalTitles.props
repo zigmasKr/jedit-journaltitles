@@ -16,7 +16,7 @@ plugin.journaltitles.JournalTitlesPlugin.docs=docs/index.html
 plugin.journaltitles.JournalTitlesPlugin.description=Editing journal titles: abbreviated and adopted form.
 
 # title for DockableWindowManager
-journaltitleseditor.title=Journal Titles 2019.10.03
+journaltitleseditor.title=Journal Titles 2019.12.30
 
 # menu settings
 plugin.journaltitles.JournalTitlesPlugin.menu-item=journaltitleseditor
