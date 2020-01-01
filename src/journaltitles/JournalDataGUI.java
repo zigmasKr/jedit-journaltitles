@@ -82,10 +82,9 @@ public class JournalDataGUI
 	// __version and __date:
 	//static String __version = "ver. 0.9.1";
 	//static String __date    = "2008.09.15";
-	//static String __version = "ver. 0.9.3";
-	//static String __date    = "2008.11.12";
-	static String __version = "ver. 0.9.4";
-	static String __date    = "2013.12.02";
+	// ...
+	static String __version = "ver. 0.9.5";
+	static String __date    = "2019.12.30";
 
 	//A border that puts 10 extra pixels at the sides and bottom of each pane:
 	Border paneEdge = BorderFactory.createEmptyBorder(0,30,30,30);
@@ -136,6 +135,7 @@ public class JournalDataGUI
 	boolean allowedButtonAccept;
 	boolean allowedButtonFind;
 	boolean AutoGoOn;
+	boolean AutoPlus;
 	String previousInputTitle;
 	// Action @edit and ListAction @listAction are two variables 
 	// which help to implement the editing of proposed 
@@ -298,6 +298,7 @@ public class JournalDataGUI
 		allowedButtonAccept = false;
 		allowedButtonFind = true;
 		AutoGoOn = false;
+		AutoPlus = false;
 		previousInputTitle = "";
 		//
 		panelStartStop = createPanelStartStop();
@@ -363,17 +364,22 @@ public class JournalDataGUI
 		JMenuItem menuitemDistinguishMarked = new JMenuItem(gl.lbMenuItemDistinguishMarked);
 		JMenuItem menuitemDistinguishAll = new JMenuItem(gl.lbMenuItemDistinguishAll);
 		JMenuItem menuitemDataGathered = new JMenuItem(gl.lbMenuItemDataGathered);
-		//JMenuItem googlesearchMenuItem = new JMenuItem("Google Search");
+		JMenuItem menuitemEditTitles = new JMenuItem(gl.lbMenuItemEditTitles);
+		JMenuItem menuitemAutoPlus = new JMenuItem(gl.lbMenuItemAutoPlus);
 		menuExtra.add(menuitemMark);
 		//menuExtra.add(menuitemDistinguishMarked);
 		menuExtra.add(menuitemDistinguishAll);
 		menuExtra.addSeparator();
 		menuExtra.add(menuitemDataGathered);
-		//menuExtra.add(googlesearchMenuItem);
+		menuExtra.addSeparator();
+		menuExtra.add(menuitemEditTitles);
+		menuExtra.addSeparator();
+		menuExtra.add(menuitemAutoPlus);
 		menuitemMark.addActionListener(new menuitemMarkListener());
-		//menuitemDistinguishMarked.addActionListener(new menuitemDistinguishMarkedListener());
 		menuitemDistinguishAll.addActionListener(new menuitemDistinguishAllListener());
 		menuitemDataGathered.addActionListener(new menuitemDataGatheredListener());
+		menuitemEditTitles.addActionListener(new menuitemEditTitlesListener());
+		menuitemAutoPlus.addActionListener(new menuitemAutoPlusListener());
 		//
 		panelME.add(menuBar, BorderLayout.CENTER);
 			//panelMenuExtra.add(menuBarExtra);
@@ -536,7 +542,7 @@ public class JournalDataGUI
 	}
 
 	// =================
-	// === Listeners ===
+	// === Menu Item Listeners ===
 	
 	public class menuitemMarkListener
 		implements ActionListener {
@@ -589,6 +595,27 @@ public class JournalDataGUI
 				}
 			}
 		}
+		
+	public class menuitemEditTitlesListener
+		implements ActionListener {
+			public void actionPerformed(ActionEvent ae) {
+				JMenuItem source = (JMenuItem)(ae.getSource());
+				if (started) {
+					// main activities are stopped:
+					actionOnStop();
+				}
+				// opens user-choice file (of journal titles) for editing:
+				jEdit.openFile(currentView, jdd.jd.jdUserChoicePath);
+			}
+		}	
+		
+	public class menuitemAutoPlusListener
+		implements ActionListener {
+			public void actionPerformed(ActionEvent ae) {
+				JMenuItem source = (JMenuItem)(ae.getSource());
+				AutoPlus = true;
+			}
+		}	
 	
 	public class buttonStartActionListener
 		implements ActionListener {
@@ -619,6 +646,7 @@ public class JournalDataGUI
 			currentView.getTextArea().scrollAndCenterCaret();
 		*/
 		
+		mlistDetails.getContents().removeAllElements();
 		isJrnlTitle = readJournalTitleNext(strBuffer, lookupStart);
 		if (isJrnlTitle) {
 		}
@@ -996,6 +1024,7 @@ public class JournalDataGUI
 		mlistDetails.getContents().removeAllElements();
 		lookupStart = 0;
 		started = false;
+		AutoPlus = false;
 		// user-choice is written down
 		jdd.writeAndCloseUserChoiceFile();
 		// tracing is written down
@@ -1006,6 +1035,7 @@ public class JournalDataGUI
 		cannot be changed. Therefore it is better to monitor these variables
 		by buttons "AUTO" and "NoDots".
 		*/
+		mlistDetails.getContents().addElement(gl.lbMessageStopped);
 	}
 
 	// === AUTO

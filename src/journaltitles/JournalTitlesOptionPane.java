@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+
 /*
  * An option pane that can be used to configure the JournalTitles plugin.
  */
@@ -63,8 +64,8 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 
 	private String selectedJrnlTitlesHome = "";
 	
-	private JRadioButton rbtnLangEN;
-	private JRadioButton rbtnLangLT;
+	private JRadioButton langEN;
+	private JRadioButton langLT;
 
 	private JournalTitlesPlugin plugin;
 	
@@ -93,7 +94,7 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 				lbHomeData = "Duomenu fail\u0173 vieta:";
 				lbHomeDefaultA = "Numatytoji A - nustatym\u0173 kataloge";
 				lbHomeDefaultB = "Numatytoji B - jEdit kataloge";
-				lbHomeSelected = "Pasirinktoji";
+				lbHomeSelected = "Pasirinktasis";
 				lbHomeBrowse = "Ie\u0161koti";
 				lbLanguage = "Kalba:";
 				lbHomeDataToolTip = "Katalogas, kuriame yra Journal Titles duomen\u0173 failai";
@@ -125,21 +126,23 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		JPanel panelInSettings = new JPanel();
 		JPanel panelInJEdit = new JPanel();
 		JPanel panelSelected = new JPanel();
-		
-		FlowLayout layoutF = new FlowLayout(FlowLayout.LEADING);
 
 		btnInSettings = new JRadioButton(cl.lbHomeDefaultA);
-		panelInSettings.setLayout(layoutF);
-		panelInSettings.add(btnInSettings); 
+		BorderLayout layoutA = new BorderLayout();
+		panelInSettings.setLayout(layoutA);
+		panelInSettings.add(btnInSettings, BorderLayout.LINE_START); 
 
 		btnInJEdit = new JRadioButton(cl.lbHomeDefaultB);
-		panelInJEdit.setLayout(layoutF);
-		panelInJEdit.add(btnInJEdit); 
+		BorderLayout layoutB = new BorderLayout();
+		panelInJEdit.setLayout(layoutB);
+		panelInJEdit.add(btnInJEdit, BorderLayout.LINE_START); 
 
 		btnSelected = new JRadioButton(cl.lbHomeSelected);
 		buttonBrowse = new JButton(cl.lbHomeBrowse);
-		//
-		panelSelected.setLayout(layoutF);
+		//BorderLayout layoutC = new BorderLayout();
+		FlowLayout layoutC = new FlowLayout(FlowLayout.LEADING);
+		panelSelected.setLayout(layoutC);
+		//panelSelected.add(btnSelected, BorderLayout.LINE_START);
 		panelSelected.add(btnSelected);
 		panelSelected.add(buttonBrowse);
 		
@@ -150,6 +153,7 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		buttonGroup.add(btnSelected);
 		btnInSettings.addActionListener(handlerA);
 		btnInJEdit.addActionListener(handlerB);
+		//btnSelected.addActionListener(handlerC);
 		buttonBrowse.addActionListener(handlerC);
 
 		panelHome.add(panelInSettings);
@@ -180,13 +184,13 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		ButtonHandlerEN handlerEN = new ButtonHandlerEN();
 		ButtonHandlerLT handlerLT = new ButtonHandlerLT();
 		
-		rbtnLangEN = new JRadioButton("EN");
-		rbtnLangLT = new JRadioButton("LT");
-		rbtnLangEN.addActionListener(handlerEN);
-		rbtnLangLT.addActionListener(handlerLT);
+		langEN = new JRadioButton("EN");
+		langLT = new JRadioButton("LT");
+		langEN.addActionListener(handlerEN);
+		langLT.addActionListener(handlerLT);
 		ButtonGroup buttonGroupLang = new ButtonGroup();
-		buttonGroupLang.add(rbtnLangEN);
-		buttonGroupLang.add(rbtnLangLT);
+		buttonGroupLang.add(langEN);
+		buttonGroupLang.add(langLT);
 		
 		JPanel panelLang = new JPanel();
 		panelLang.setLayout(new BoxLayout(panelLang, BoxLayout.Y_AXIS));
@@ -194,21 +198,21 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		JPanel panelEN = new JPanel();
 		BorderLayout layoutEN = new BorderLayout();
 		panelEN.setLayout(layoutEN);
-		panelEN.add(rbtnLangEN, BorderLayout.LINE_START);
+		panelEN.add(langEN, BorderLayout.LINE_START);
 		//
 		JPanel panelLT = new JPanel();
 		BorderLayout layoutLT = new BorderLayout();
 		panelLT.setLayout(layoutLT);
-		panelLT.add(rbtnLangLT, BorderLayout.LINE_START);
+		panelLT.add(langLT, BorderLayout.LINE_START);
 		//
 		panelLang.add(panelEN);
 		panelLang.add(panelLT);
 		panelLang.setToolTipText(cl.lbLanguageToolTip);
 		
 		if (jEdit.getProperty("options.journaltitles.gui-language").equals("EN")) {
-			rbtnLangEN.setSelected(true);
+			langEN.setSelected(true);
 		} else if (jEdit.getProperty("options.journaltitles.gui-language").equals("LT")) {
-			rbtnLangLT.setSelected(true);
+			langLT.setSelected(true);
 		}
 		
 		addComponent(cl.lbLanguage, panelLang);
@@ -220,7 +224,7 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		public void actionPerformed(ActionEvent e) {
 			selectedJrnlTitlesHome =
 				jEdit.getSettingsDirectory() + File.separator + "plugins" +
-				File.separator + "journaltitles.data" + File.separator;
+				File.separator + "data.journaltitles" + File.separator;
 			jrnlTitlesHomePath.setText(selectedJrnlTitlesHome);
 			plugin.setJournalTitlesHome(selectedJrnlTitlesHome);
 		}
@@ -231,7 +235,7 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		public void actionPerformed(ActionEvent e) {
 			selectedJrnlTitlesHome =
 				jEdit.getJEditHome() + File.separator + "plugins" +
-				File.separator + "journaltitles.data" + File.separator;
+				File.separator + "data.journaltitles" + File.separator;
 			jrnlTitlesHomePath.setText(selectedJrnlTitlesHome);
 			plugin.setJournalTitlesHome(selectedJrnlTitlesHome);
 		}

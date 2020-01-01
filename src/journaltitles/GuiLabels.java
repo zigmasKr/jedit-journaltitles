@@ -38,6 +38,8 @@ public class GuiLabels {
 	String lbMenuItemDistinguishMarked;
 	String lbMenuItemDistinguishAll;
 	String lbMenuItemDataGathered;
+	String lbMenuItemAutoPlus;
+	String lbMenuItemEditTitles;
 	String lbBorderSearch;
 	String lbLabelInputJournalTitle;
 	String lbBorderResults;
@@ -51,12 +53,13 @@ public class GuiLabels {
 	String lbErrorMessageA;
 	String lbErrorMessageB;
 	String lbMessageHomeNotFound;
+	String lbMessageStopped;
 	
 	public GuiLabels(String str) {
 		if (str.equals("EN")) {
 			lbButtonStart = "START";
 			lbButtonAuto = "AUTO";
-			lbMenuExtra = "EXTRA";
+			lbMenuExtra = "MENU";
 			lbButtonNoDots = "No Dots";
 			lbButtonStop = "STOP";
 			lbButtonFind = "Find";
@@ -67,6 +70,8 @@ public class GuiLabels {
 			lbMenuItemDistinguishMarked = "Distinguish marked";
 			lbMenuItemDistinguishAll = "Distinguish all";
 			lbMenuItemDataGathered = "Data gathered";
+			lbMenuItemAutoPlus = "AUTO+";
+			lbMenuItemEditTitles = "Edit Titles";
 			lbBorderSearch = "Search";
 			lbLabelInputJournalTitle = "Input journal title:";
 			lbBorderResults = "Results of search";
@@ -74,17 +79,18 @@ public class GuiLabels {
 			lbLabelDetails = "Details:";
 			lbBorderDataSource = "Journal data source";
 			lbTextNotFound = "Could not find \\bseries ... \\btitle";
-			lbDummyElement = "dummy: Lorem Ipsum";
-			lbDummyElementA = "dummy: Lorem";
-			lbDummyElementB = "dummy: Ipsum";
+			lbDummyElement = "... ...";
+			lbDummyElementA = "...";
+			lbDummyElementB = "...";
 			lbErrorMessageA = "Journal not found. Error 1";
 			lbErrorMessageB = "Journal not found. Error 2";
 			lbMessageHomeNotFound = "In plugin's options select the custom place for Journal Titles Editor data.";
+			lbMessageStopped = "Stopped";
 		} 
 		else if (str.equals("LT")) {
 			lbButtonStart = "STARTAS";
 			lbButtonAuto = "AUTO";
-			lbMenuExtra = "EXTRA";
+			lbMenuExtra = "MENIU";
 			lbButtonNoDots = "Be Ta\u0161k\u0173";
 			lbButtonStop = "STOP";
 			lbButtonFind = "Rasti";
@@ -95,6 +101,8 @@ public class GuiLabels {
 			lbMenuItemDistinguishMarked = "I\u0161skirti pa\u017Eym.";
 			lbMenuItemDistinguishAll = "I\u0161skirti visus";
 			lbMenuItemDataGathered = "Sukaupti duomenys";
+			lbMenuItemAutoPlus = "AUTO+";
+			lbMenuItemEditTitles = "Redaguoti pavadinimus";
 			lbBorderSearch = "Paie\u0161ka";
 			lbLabelInputJournalTitle = "Duotas \u017Eurnalo pavadinimas:";
 			lbBorderResults = "Paie\u0161kos rezultatai";
@@ -102,12 +110,13 @@ public class GuiLabels {
 			lbLabelDetails = "Detal\u0117s:";
 			lbBorderDataSource = "\u017Durnal\u0173 duomen\u0173 \u0161altinis";
 			lbTextNotFound = "Nerasta \\bseries ... \\btitle";
-			lbDummyElement = "dummy: Lorem Ipsum";
-			lbDummyElementA = "dummy: Lorem";
-			lbDummyElementB = "dummy: Ipsum";
+			lbDummyElement = "... ...";
+			lbDummyElementA = "...";
+			lbDummyElementB = "...";
 			lbErrorMessageA = "\u017Durnalas nerastas. Klaida 1";
 			lbErrorMessageB = "\u017Durnalas nerastas. Klaida 2";
 			lbMessageHomeNotFound = "Plugino nustatymuose nurodykite Journal Titles Editor duomen\u0173 viet\u0105.";
+			lbMessageStopped = "Sustabdyta";
 		}
 	}
 }
