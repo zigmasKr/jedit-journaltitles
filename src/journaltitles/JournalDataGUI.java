@@ -134,8 +134,9 @@ public class JournalDataGUI
 	// Is "START" already pushed.
 	boolean allowedButtonAccept;
 	boolean allowedButtonFind;
-	boolean AutoGoOn;
-	boolean AutoPlus;
+	boolean goOnAuto;
+	boolean goOnAutoPlus;
+	JMenuItem menuitemAutoPlus = new JMenuItem(gl.lbMenuItemAutoPlus);
 	String previousInputTitle;
 	// Action @edit and ListAction @listAction are two variables 
 	// which help to implement the editing of proposed 
@@ -297,8 +298,8 @@ public class JournalDataGUI
 		started = false;
 		allowedButtonAccept = false;
 		allowedButtonFind = true;
-		AutoGoOn = false;
-		AutoPlus = false;
+		goOnAuto = false;
+		goOnAutoPlus = false;
 		previousInputTitle = "";
 		//
 		panelStartStop = createPanelStartStop();
@@ -365,7 +366,7 @@ public class JournalDataGUI
 		JMenuItem menuitemDistinguishAll = new JMenuItem(gl.lbMenuItemDistinguishAll);
 		JMenuItem menuitemDataGathered = new JMenuItem(gl.lbMenuItemDataGathered);
 		JMenuItem menuitemEditTitles = new JMenuItem(gl.lbMenuItemEditTitles);
-		JMenuItem menuitemAutoPlus = new JMenuItem(gl.lbMenuItemAutoPlus);
+		menuitemAutoPlus.setBackground(Color.GRAY);
 		menuExtra.add(menuitemMark);
 		//menuExtra.add(menuitemDistinguishMarked);
 		menuExtra.add(menuitemDistinguishAll);
@@ -382,7 +383,6 @@ public class JournalDataGUI
 		menuitemAutoPlus.addActionListener(new menuitemAutoPlusListener());
 		//
 		panelME.add(menuBar, BorderLayout.CENTER);
-			//panelMenuExtra.add(menuBarExtra);
 		return panelME;
 	}
 
@@ -459,7 +459,9 @@ public class JournalDataGUI
 		JPanel panelBA = new JPanel();
 		panelBA.setLayout(new BorderLayout());
 		Box boxSS = Box.createHorizontalBox();
-		panelBA.add(new JLabel(gl.lbLabelJournalTitles), BorderLayout.WEST);
+		JLabel labelJournalTitlesList = new JLabel(gl.lbLabelJournalTitles);
+		labelJournalTitlesList.setToolTipText(gl.lbLabelJournalTitlesList);
+		panelBA.add(labelJournalTitlesList, BorderLayout.WEST);
 		boxSS.add(buttonAccept);
 		boxSS.add(Box.createHorizontalStrut(5));
 		boxSS.add(buttonNext);
@@ -613,7 +615,13 @@ public class JournalDataGUI
 		implements ActionListener {
 			public void actionPerformed(ActionEvent ae) {
 				JMenuItem source = (JMenuItem)(ae.getSource());
-				AutoPlus = true;
+				if (!goOnAutoPlus) {
+					goOnAutoPlus = true;
+					source.setBackground(Color.GREEN); 
+				} else {
+					goOnAutoPlus = false;
+					source.setBackground(Color.GRAY); 
+				}
 			}
 		}	
 	
@@ -817,7 +825,13 @@ public class JournalDataGUI
 		public void actionPerformed(ActionEvent aevt) {
 			JButton button = (JButton) aevt.getSource();
 			if (button.isEnabled()) {
-				actionOnNext();
+				if (started) {
+					if (!goOnAuto) {
+						actionOnNext();
+					} else {
+						actionOnNextAuto();
+					}
+				}
 			}
 		}
 	}
@@ -838,171 +852,188 @@ public class JournalDataGUI
 	* But in case when the option "NoDots" is used,
 	* formally, (almost) all journal titles are changed.
 	* Therefore, in a simple case this episode could be omitted.
-	* But in case of the option AutoGoOn this episode must be omitted.   ???
+	* But in case of the option goOnAuto this episode must be omitted.   ???
 	* ===
 	*/
 	//
 	public void actionOnNext() {
-		// local variable to monitor "AutoGoOn":
-		boolean localAutoGoOn;
-		if (started) {
-			// If the button "AUTO" is not selected,
-			// the sequence of actions called "Next" is performed only once:
-			if (!AutoGoOn) {
-				// After an eventual change in the text the buffer length may change:
-				int bufferLength = currentBuffer.getLength();
-				String strBuffer = currentBuffer.getText(0, bufferLength);
-				isJrnlTitle = readJournalTitleNext(strBuffer, lookupStart);
-				if (isJrnlTitle) {
-					mlistTitles.getContents().removeAllElements();
-					mlistDetails.getContents().removeAllElements();
-					jdd.selectedTitle = "";
-				}
-				// when \bissue...\bititle is (no more) found:
-				else {
-					// finalizing actions:
-					mlistTitles.getContents().removeAllElements(); // is it good?
-					mlistDetails.getContents().removeAllElements();
-					mlistDetails.getContents().addElement(gl.lbTextNotFound);
-					// the button "Find" is 'stopped':
-					textfInputJournalTitle.setText("");
-
-				}
-				allowedButtonAccept = false;
-				// for the found title should not be "selected-as-text"
-			}
-			// If the button "AUTO" is enabled, then the sequence of actions called
-			// "Next" may be performed many (more than once) times.
-			// But the final is the same.
-			else {
-				/**
-				* With the AUTO enabled, mlistTitles and mlistDetails are not appended.
-				* Conditions are checked on what can be done with findings made by
-				* actionOnRasti(), and if the AUTO loop can be continued.
-				* While the continuation condition is satisfied (localAutoGoOn @true),
-				* the function of the button "Find" is simulated, and the button "Accept" is not pressed:
-				* "Accept" is either not needed or it is simulated also.
-				* ===
-				* localAutoGoOn (continuation) conditions.
-				* Three levels of 'matching' are possible:
-				* [A] When (only) =EXACT= matching(s) is/are available.
-				* If any matching(s) is/are found, and for any of them 
-				* the matching level is not =EXACT=, then
-				* the continuation condition [A] is not satisfied.
-				* There can be 2 candidates of level =EXACT=, one of them, say, with DB user: =user choice=,
-				* and another with a real DB user. Then it is not important which candidate is accepted.
-				
-				* Due to possible editing of journal titles being accepted (editing the list of titles)
-				* there can a situation emerge when several titles coincide, 
-				* but one of them is of level =EXACT=.
-				* The this title is just accepted, hence nothing is to be changed.
-				* Such title coincides with that in the field "Input journal title".
-				* [B]
-				* There can be a (one) candidate of level =ACCEPTED=.
-				* There can be a unique candidate of level =FOUND=.
-				* There can be a unique candidate of level =REGEX=.
-				*
-				* Level =REGEX= : if there are more than one match of this level, the user should decide
-				* which candidate is to be accepted, hence AUTO is stopped.
-				*/
-				localAutoGoOn = false; // initial state
-				do {
-					allowedButtonAccept = true;
-					// After an eventual change in the text the buffer length may change:
-					int bufferLength = currentBuffer.getLength();
-					String strBuffer = currentBuffer.getText(0, bufferLength);
-					isJrnlTitle = readJournalTitleNext(strBuffer, lookupStart);
-					if (isJrnlTitle) {
-						// lists are cleaned:
-						mlistTitles.getContents().removeAllElements();
-						mlistDetails.getContents().removeAllElements();
-						jdd.selectedTitle = "";
-						//
-						jddRollActionsForDataMatched();
-						if (jdd.jnTitlesMatched.size() > 0) {
-							Macros.message(currentView, "jdd.jnTitlesMatched.size(): " + jdd.jnTitlesMatched.size() + "\n");
-							if (jdd.jd.jdSource.equals("SerialsDB:SPR")) {
-								// The continuation condition [A] here:
-								localAutoGoOn = true;
-								for(int x = 0; x < jdd.jnAllDataMatched.size(); x++) {
-									Macros.message(currentView, "jdd.jnAllDataMatched.get(x).get(0): " + jdd.jnAllDataMatched.get(x).get(0) + "\n");
-									Macros.message(currentView, "jdd.jnAllDataMatched.get(x).get(1): " + jdd.jnAllDataMatched.get(x).get(1) + "\n");
-									if (!jdd.jnAllDataMatched.get(x).get(1).equals("=EXACT=")) {
-										localAutoGoOn = false;
-									}
-								}
-								if (localAutoGoOn) {
-									jdd.selectedTitle = jdd.jnTitlesMatched.get(0);
-									Macros.message(currentView, "1: jdd.selectedTitle: " + jdd.selectedTitle + "\n");
-									actionOnAccept();
-								}
-								// [B] If there were no success with =EXACT=,
-								// one tries with the levels =FOUND=, =ACCEPTED=, =REGEX=.
-								// If localAutoGoOn == true due to coincidence of level =EXACT= (condition [A]),
-								// the following epizode is omitted.
-								// If localAutoGoOn == false, there may be new possibilities:
-								if (!localAutoGoOn) {
-									if ((jdd.jnTitlesMatched.size() == 1) &&
-										(jdd.jnAllDataMatched.get(0).get(1).equals("=FOUND=") ||
-										 jdd.jnAllDataMatched.get(0).get(1).equals("=ACCEPTED=") ||
-										 jdd.jnAllDataMatched.get(0).get(1).equals("=REGEX="))) {
-										// The unique suggestion is accepted, and localAutoGoOn = true;
-										// One has to produce selection of this unique element of the list,
-										// its acceptance, and moving to the next \bissue\btitle
-										jdd.selectedTitle = jdd.jnTitlesMatched.get(0);
-										//Macros.message(currentView, "2: jdd.selectedTitle: " + jdd.selectedTitle + "\n");
-										actionOnAccept();
-										localAutoGoOn = true;
-									}
-									else {
-										localAutoGoOn = false;
-									}
-								}
-								// If we leave this block with localAutoGoOn == true,
-								// then we continue with the new run through the while loop from its start,
-								// where a next \bissue\btitle is searched.
+		// After an eventual change in the text the buffer length may change:
+		int bufferLength = currentBuffer.getLength();
+		String strBuffer = currentBuffer.getText(0, bufferLength);
+		isJrnlTitle = readJournalTitleNext(strBuffer, lookupStart);
+		if (isJrnlTitle) {
+			mlistTitles.getContents().removeAllElements();
+			mlistDetails.getContents().removeAllElements();
+			jdd.selectedTitle = "";
+		}
+		// when \bissue...\bititle is (no more) found:
+		else {
+			// finalizing actions:
+			mlistTitles.getContents().removeAllElements(); // is it good?
+			mlistDetails.getContents().removeAllElements();
+			mlistDetails.getContents().addElement(gl.lbTextNotFound);
+			// the button "Find" is 'stopped':
+			textfInputJournalTitle.setText("");
+		}
+		allowedButtonAccept = false;
+		// When all activities bounded to buttonNext are done,
+		// buttonFind is allowed:
+		allowedButtonFind = true;
+	}
+	
+	public void actionOnNextAuto() {
+		// Action on 'Next', when 'AUTO' is activated.
+		/**
+		* With the AUTO enabled, mlistTitles and mlistDetails are not appended.
+		* Conditions are checked on what can be done with findings made by
+		* actionOnFind(), and if the AUTO loop can be continued.
+		* While the continuation condition is satisfied (localGoOnAuto @true),
+		* the function of the button "Find" is simulated, and the button "Accept" is not pressed:
+		* "Accept" is either not needed or it is simulated also.
+		* ===
+		* localGoOnAuto (continuation) conditions.
+		* Three levels of 'matching' are possible:
+		* [A] When (only) =EXACT= matching(s) is/are available.
+		* If any matching(s) is/are found, and for any of them 
+		* the matching level is not =EXACT=, then
+		* the continuation condition [A] is not satisfied.
+		* There can be 2 candidates of level =EXACT=, one of them, say, with DB user: =user choice=,
+		* and another with a real DB user. Then it is not important which candidate is accepted.
+		
+		* Due to possible editing of journal titles being accepted (editing the list of titles)
+		* a situation can emerge when several titles match, 
+		* but one of them is of level =EXACT=.
+		* Then this title is just accepted, hence nothing is to be changed.
+		* Such title coincides with that in the field "Input journal title".
+		* [B]
+		* There can be a (one) candidate of level =ACCEPTED=.
+		* There can be a unique candidate of level =FOUND=.
+		* There can be a unique candidate of level =REGEX=.
+		*
+		* Level =REGEX= : if there are more than one match of this level, the user should decide
+		* which candidate is to be accepted, hence AUTO is stopped.
+		*/
+		String screenMessage = "";
+		// local variable to monitor "goOnAuto":
+		boolean localGoOnAuto;
+		//
+		localGoOnAuto = false; // initial state
+		do {
+			allowedButtonAccept = true;
+			// After an eventual change in the text the buffer length may change:
+			int bufferLength = currentBuffer.getLength();
+			String strBuffer = currentBuffer.getText(0, bufferLength);
+			isJrnlTitle = readJournalTitleNext(strBuffer, lookupStart);
+			if (isJrnlTitle) {
+				// lists are cleaned:
+				mlistTitles.getContents().removeAllElements();
+				mlistDetails.getContents().removeAllElements();
+				jdd.selectedTitle = "";
+				// textfInputJournalTitle gets the journal title in readJournalTitleNext(...)
+				jdd.inputTitle = textfInputJournalTitle.getText();
+				jddRollActionsForDataMatched();
+				if (jdd.jnTitlesMatched.size() > 0) {
+					if (jdd.jd.jdSource.equals("SerialsDB:SPR")) {
+						if (goOnAutoPlus) {
+							screenMessage = "# matched titles: ";
+							screenMessage = screenMessage + jdd.jnAllDataMatched.size() + "\n";
+							for (int x = 0; x < jdd.jnAllDataMatched.size(); x++) {
+								screenMessage = screenMessage + "\n" + "Title: " + jdd.jnAllDataMatched.get(x).get(0);
+								screenMessage = screenMessage + "\n" + "Level: " + jdd.jnAllDataMatched.get(x).get(1);
 							}
-							else if (jdd.jd.jdSource.equals("AMS")) {
-								// In the case of "AMS" a simple condition is sufficient: there should be only one
-								// coincidence. This condition could be elaborated.
-								if (jdd.jnTitlesMatched.size() == 1) {
-									localAutoGoOn = true;
-								}
-								else {
-									localAutoGoOn = false;
-								}
+						}
+						// The continuation condition [A] here:
+						localGoOnAuto = true;
+						for (int x = 0; x < jdd.jnAllDataMatched.size(); x++) {
+							if (!jdd.jnAllDataMatched.get(x).get(1).equals("=EXACT=")) {
+								localGoOnAuto = false;
 							}
-						}   // the end of jdd.jnTitlesMatched.size() > 0 branch
+						}
+						if (localGoOnAuto) {
+							jdd.selectedTitle = jdd.jnTitlesMatched.get(0);
+							if (goOnAutoPlus) {
+								screenMessage = screenMessage + "\n\n" + "Selected: " + jdd.selectedTitle;
+								Macros.message(currentView, screenMessage);
+							}
+							mlistDetails.getContents().removeAllElements();
+							mlistDetails.getContents().addElement("Selected: " + jdd.selectedTitle);
+							actionOnAccept();
+						}
+						// [B] If there were no success with =EXACT=,
+						// one tries with the levels =FOUND=, =ACCEPTED=, =REGEX=.
+						// If localGoOnAuto == true due to coincidence of level =EXACT= (condition [A]),
+						// the following epizode is omitted.
+						// If localGoOnAuto == false, there may be new possibilities:
+						if (!localGoOnAuto) {
+							if ((jdd.jnTitlesMatched.size() == 1) &&
+								(jdd.jnAllDataMatched.get(0).get(1).equals("=FOUND=") ||
+								 jdd.jnAllDataMatched.get(0).get(1).equals("=ACCEPTED=") ||
+								 jdd.jnAllDataMatched.get(0).get(1).equals("=REGEX="))) {
+								// The unique suggestion is accepted, and localGoOnAuto = true;
+								// One has to produce selection of this unique element of the list,
+								// its acceptance, and moving to the next \bissue\btitle
+								jdd.selectedTitle = jdd.jnTitlesMatched.get(0);
+								if (goOnAutoPlus) {
+									screenMessage = screenMessage + "\n\n" + "Selected: " + jdd.selectedTitle;
+									Macros.message(currentView, screenMessage);
+								}
+								mlistDetails.getContents().removeAllElements();
+								mlistDetails.getContents().addElement("Selected: " + jdd.selectedTitle);
+								actionOnAccept();
+								localGoOnAuto = true;
+							}
+							else {
+								if (goOnAutoPlus) {
+									screenMessage = screenMessage + "\n\n" + "Selected title: " + "NONE";
+									Macros.message(currentView, screenMessage);
+								}
+								mlistDetails.getContents().removeAllElements();
+								mlistDetails.getContents().addElement("Selected: " + "NONE");
+								localGoOnAuto = false;
+							}
+						}
+						// If we leave this block with localGoOnAuto == true,
+						// then we continue with the new run through the while loop from its start,
+						// where a next \bissue\btitle is searched.
+					}
+					else if (jdd.jd.jdSource.equals("AMS")) {
+						// In the case of "AMS" a simple condition is sufficient: there should be only one
+						// coincidence. This condition could be elaborated.
+						if (jdd.jnTitlesMatched.size() == 1) {
+							localGoOnAuto = true;
+						}
 						else {
-							// If jdd.jnTitlesMatched.size() == 0:
-							localAutoGoOn = false;
+							localGoOnAuto = false;
 						}
 					}
-					// if \bissue\btitle is no more found:
-					else {
-						localAutoGoOn = false;
-						// Without this we fall into endless loop ;)
-						/////notFoundBseriesBtitle();
-						// Actions when bissue-btitle is no more found:
-						mlistTitles.getContents().removeAllElements(); // is this good?
-						mlistDetails.getContents().removeAllElements();
-						mlistDetails.getContents().addElement(gl.lbTextNotFound);
-						allowedButtonAccept = false;
-						// the button "Rasti" is 'stopped':
-						textfInputJournalTitle.setText("");
-
-					}
+				}   // the end of jdd.jnTitlesMatched.size() > 0 branch
+				else {
+					// If jdd.jnTitlesMatched.size() == 0:
+					localGoOnAuto = false;
 				}
-				// The enf of the do-while loop; one should see the loop will not become endless;
-				// See above!
-				while(localAutoGoOn);
-				// If AUTO is not continued, then the choice should be done "by hand", and
-				// buttonAccept should be pressed.
 			}
-			// When all activities bounded to buttonNext are done,
-			// buttonFind is allowed:
-			allowedButtonFind = true;
+			// if \bissue\btitle is no more found:
+			else {
+				localGoOnAuto = false;
+				// Without this we fall into endless loop ;)
+				// Actions when bissue-btitle is no more found:
+				mlistTitles.getContents().removeAllElements(); // is this good?
+				mlistDetails.getContents().removeAllElements();
+				mlistDetails.getContents().addElement(gl.lbTextNotFound);
+				allowedButtonAccept = false;
+				// the button "Find" is 'stopped':
+				textfInputJournalTitle.setText("");
+			}
 		}
+		// The enf of the do-while loop; one should see the loop will not become endless;
+		// See above!
+		while(localGoOnAuto);
+		// If AUTO is not continued, then the choice should be done "by hand", and
+		// buttonAccept should be pressed.
+		//
+		// When all activities bounded to buttonNext are done,
+		// buttonFind is allowed:
+		allowedButtonFind = true;
 	}
 
 
@@ -1024,7 +1055,8 @@ public class JournalDataGUI
 		mlistDetails.getContents().removeAllElements();
 		lookupStart = 0;
 		started = false;
-		AutoPlus = false;
+		goOnAutoPlus = false;
+		menuitemAutoPlus.setBackground(Color.GRAY);
 		// user-choice is written down
 		jdd.writeAndCloseUserChoiceFile();
 		// tracing is written down
@@ -1047,9 +1079,9 @@ public class JournalDataGUI
 			// boolean buttonAutoSelected = buttonA.getModel().isSelected();
 			// there is no sense to introduce a local variable, since its value should be 
 			// assigned to another variable
-			AutoGoOn = buttonA.getModel().isSelected();
+			goOnAuto = buttonA.getModel().isSelected();
 			// Control:
-			// Macros.message(currentView, "Auto = " + AutoGoOn + "\n");
+			// Macros.message(currentView, "Auto = " + goOnAuto + "\n");
 		}
 	}
 

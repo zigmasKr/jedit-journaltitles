@@ -54,6 +54,7 @@ public class GuiLabels {
 	String lbErrorMessageB;
 	String lbMessageHomeNotFound;
 	String lbMessageStopped;
+	String lbLabelJournalTitlesList;
 	
 	public GuiLabels(String str) {
 		if (str.equals("EN")) {
@@ -86,12 +87,13 @@ public class GuiLabels {
 			lbErrorMessageB = "Journal not found. Error 2";
 			lbMessageHomeNotFound = "In plugin's options select the custom place for Journal Titles Editor data.";
 			lbMessageStopped = "Stopped";
+			lbLabelJournalTitlesList = "<html>Items of Journal titles list are editable.<br> Auxiliary line(s) showing \"...\" help to make this editing easier.</html>";
 		} 
 		else if (str.equals("LT")) {
-			lbButtonStart = "STARTAS";
+			lbButtonStart = "START";
 			lbButtonAuto = "AUTO";
 			lbMenuExtra = "MENIU";
-			lbButtonNoDots = "Be Ta\u0161k\u0173";
+			lbButtonNoDots = "Be ta\u0161k\u0173"; //"Be Ta\u0161k\u0173"
 			lbButtonStop = "STOP";
 			lbButtonFind = "Rasti";
 			lbSearchFromBeginning = "Ie\u0161koti nuo prad\u017Eios";
@@ -112,11 +114,12 @@ public class GuiLabels {
 			lbTextNotFound = "Nerasta \\bseries ... \\btitle";
 			lbDummyElement = "... ...";
 			lbDummyElementA = "...";
-			lbDummyElementB = "...";
+			lbDummyElementB = "... ...";
 			lbErrorMessageA = "\u017Durnalas nerastas. Klaida 1";
 			lbErrorMessageB = "\u017Durnalas nerastas. Klaida 2";
 			lbMessageHomeNotFound = "Plugino nustatymuose nurodykite Journal Titles Editor duomen\u0173 viet\u0105.";
 			lbMessageStopped = "Sustabdyta";
+			lbLabelJournalTitlesList = "<html>\u017Durnal\u0173 pavadinimai yra redaguojami.<br> Pagalbin\u0117s eilut\u0117s su \"...\" palengvina redagavim\u0105.</html>";
 		}
 	}
 }
