@@ -39,6 +39,8 @@ public class GuiLabels {
 	String lbMenuItemDistinguishAll;
 	String lbMenuItemDataGathered;
 	String lbMenuItemAutoPlus;
+	String lbTrace;
+	String lbTraceOutput;
 	String lbMenuItemEditTitles;
 	String lbBorderSearch;
 	String lbLabelInputJournalTitle;
@@ -72,6 +74,8 @@ public class GuiLabels {
 			lbMenuItemDistinguishAll = "Distinguish all";
 			lbMenuItemDataGathered = "Data gathered";
 			lbMenuItemAutoPlus = "AUTO+";
+			lbTrace = "TRACE";
+			lbTraceOutput = "TRACE outp.";
 			lbMenuItemEditTitles = "Edit Titles";
 			lbBorderSearch = "Search";
 			lbLabelInputJournalTitle = "Input journal title:";
@@ -104,6 +108,8 @@ public class GuiLabels {
 			lbMenuItemDistinguishAll = "I\u0161skirti visus";
 			lbMenuItemDataGathered = "Sukaupti duomenys";
 			lbMenuItemAutoPlus = "AUTO+";
+			lbTrace = "SEKTI";
+			lbTraceOutput = "SEKIMO duom.";
 			lbMenuItemEditTitles = "Redaguoti pavadinimus";
 			lbBorderSearch = "Paie\u0161ka";
 			lbLabelInputJournalTitle = "Duotas \u017Eurnalo pavadinimas:";

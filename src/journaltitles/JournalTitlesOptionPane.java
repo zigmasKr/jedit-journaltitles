@@ -3,7 +3,7 @@
  * *
  * Part of the JournalTitles plugin for the jEdit text editor
  *
- * Copyright (C) 2019 Z.K.
+ * Copyright (C) 2019-2020 Z.K.
  * zigmas.kr@gmail.com
  *
  * This program is free software; you can redistribute it and/or
@@ -78,6 +78,8 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		String lbLanguage;
 		String lbHomeDataToolTip;
 		String lbLanguageToolTip;
+		String lbDebugFileName;
+		String lbBrowse;
 		
 		private CompLabels(String str) {
 			if (str.equals("EN")) {
@@ -89,6 +91,8 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 				lbLanguage = "Language:";
 				lbHomeDataToolTip = "Folder where Journal Titles data files are placed";
 				lbLanguageToolTip = "GUI language";
+				lbDebugFileName = "Debug file name";
+				lbBrowse = "Browse";
 			}
 			else if (str.equals("LT")) {
 				lbHomeData = "Duomenu fail\u0173 vieta:";
@@ -99,6 +103,8 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 				lbLanguage = "Kalba:";
 				lbHomeDataToolTip = "Katalogas, kuriame yra Journal Titles duomen\u0173 failai";
 				lbLanguageToolTip = "Grafin\u0117s s\u0105sajos kalba";
+				lbDebugFileName = "Debug failo vardas";
+				lbBrowse = "Ie\u0161koti";
 			}
 		}
 	}

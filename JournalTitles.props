@@ -4,7 +4,7 @@
 
 plugin.journaltitles.JournalTitlesPlugin.name=Journal Titles Editor
 plugin.journaltitles.JournalTitlesPlugin.author=Zigmas Kry\u017Eius
-plugin.journaltitles.JournalTitlesPlugin.version=0.9.5
+plugin.journaltitles.JournalTitlesPlugin.version=0.9.6
 plugin.journaltitles.JournalTitlesPlugin.activate=defer
 
 # dependencies
@@ -16,7 +16,7 @@ plugin.journaltitles.JournalTitlesPlugin.docs=docs/index.html
 plugin.journaltitles.JournalTitlesPlugin.description=Editing journal titles: abbreviated and adopted form.
 
 # title for DockableWindowManager
-journaltitleseditor.title=Journal Titles 2020.01.10
+journaltitleseditor.title=Journal Titles 2020.01.14
 
 # menu settings
 plugin.journaltitles.JournalTitlesPlugin.menu-item=journaltitleseditor

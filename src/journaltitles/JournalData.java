@@ -3,7 +3,7 @@
  * *
  * Part of the JournalTitles plugin for the jEdit text editor
  *
- * Copyright (C) 2008-2014-2019 Zigmantas Kryzius
+ * Copyright (C) 2008-2014-2020 Zigmantas Kryzius
  * zigmas.kr@gmail.com
  *
  * This program is free software; you can redistribute it and/or

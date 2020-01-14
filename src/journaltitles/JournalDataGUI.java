@@ -3,7 +3,7 @@
  * *
  * Part of the JournalTitles plugin for the jEdit text editor
  *
- * Copyright (C) 2008-2019 Z.K.
+ * Copyright (C) 2008-2020 Z.K.
  * zigmas.kr@gmail.com
  *
  * This program is free software; you can redistribute it and/or
@@ -83,8 +83,8 @@ public class JournalDataGUI
 	//static String __version = "ver. 0.9.1";
 	//static String __date    = "2008.09.15";
 	// ...
-	static String __version = "ver. 0.9.5";
-	static String __date    = "2019.12.30";
+	static String __version = "ver. 0.9.6";
+	static String __date    = "2020.01.14";
 
 	//A border that puts 10 extra pixels at the sides and bottom of each pane:
 	Border paneEdge = BorderFactory.createEmptyBorder(0,30,30,30);
@@ -135,10 +135,11 @@ public class JournalDataGUI
 	boolean allowedButtonAccept;
 	boolean allowedButtonFind;
 	boolean goOnAuto;
-	boolean manuallyAccepted;
 	boolean localGoOnAuto;
 	boolean goOnAutoPlus;
+	boolean traceOn;
 	JMenuItem menuitemAutoPlus = new JMenuItem(gl.lbMenuItemAutoPlus);
+	JMenuItem menuitemTrace = new JMenuItem(gl.lbTrace);
 	String previousInputTitle;
 	// Action @edit and ListAction @listAction are two variables 
 	// which help to implement the editing of proposed 
@@ -302,8 +303,8 @@ public class JournalDataGUI
 		allowedButtonFind = true;
 		goOnAuto = false;
 		localGoOnAuto = false;
-		manuallyAccepted = false;
 		goOnAutoPlus = false;
+		traceOn = false;
 		previousInputTitle = "";
 		//
 		panelStartStop = createPanelStartStop();
@@ -371,6 +372,8 @@ public class JournalDataGUI
 		JMenuItem menuitemDataGathered = new JMenuItem(gl.lbMenuItemDataGathered);
 		JMenuItem menuitemEditTitles = new JMenuItem(gl.lbMenuItemEditTitles);
 		menuitemAutoPlus.setBackground(Color.GRAY);
+		menuitemTrace.setBackground(Color.GRAY);
+		JMenuItem menuitemTraceOutput = new JMenuItem(gl.lbTraceOutput);
 		menuExtra.add(menuitemMark);
 		//menuExtra.add(menuitemDistinguishMarked);
 		menuExtra.add(menuitemDistinguishAll);
@@ -380,11 +383,15 @@ public class JournalDataGUI
 		menuExtra.add(menuitemEditTitles);
 		menuExtra.addSeparator();
 		menuExtra.add(menuitemAutoPlus);
+		menuExtra.add(menuitemTrace);
+		menuExtra.add(menuitemTraceOutput);
 		menuitemMark.addActionListener(new menuitemMarkListener());
 		menuitemDistinguishAll.addActionListener(new menuitemDistinguishAllListener());
 		menuitemDataGathered.addActionListener(new menuitemDataGatheredListener());
 		menuitemEditTitles.addActionListener(new menuitemEditTitlesListener());
 		menuitemAutoPlus.addActionListener(new menuitemAutoPlusListener());
+		menuitemTrace.addActionListener(new menuitemTraceListener());
+		menuitemTraceOutput.addActionListener(new menuitemTraceOutputListener());
 		//
 		panelME.add(menuBar, BorderLayout.CENTER);
 		return panelME;
@@ -628,6 +635,36 @@ public class JournalDataGUI
 				}
 			}
 		}	
+		
+	public class menuitemTraceListener
+		implements ActionListener {
+		public void actionPerformed(ActionEvent ae) {
+			JMenuItem source = (JMenuItem)(ae.getSource());
+			if (!traceOn) {
+					traceOn = true;
+					jdd.isTracingOn = true;
+					source.setBackground(Color.BLUE); 
+			} else {
+				traceOn = false;
+				jdd.isTracingOn = false;
+				source.setBackground(Color.GRAY); 
+			}
+		}
+	}
+	
+	public class menuitemTraceOutputListener
+		implements ActionListener {
+		public void actionPerformed(ActionEvent ae) {
+			JMenuItem source = (JMenuItem)(ae.getSource());
+			if (started) {
+				if (source.getText().equals(gl.lbTraceOutput)) {
+					// tracing data to new buffer:
+					Buffer tracingBuffer = jEdit.newFile(currentView);
+					tracingBuffer.insert(0, jdd.tracingStrb);
+				}
+			}
+		}
+	}
 	
 	public class buttonStartActionListener
 		implements ActionListener {
@@ -669,7 +706,9 @@ public class JournalDataGUI
 		jdd.userChoiceDataAccumulator = "";
 		jdd.rollUserChoiceFile();
 		// TRACING:
-		//jdd.tracingAccumulator = "\n=== START TRACING ===\n\n";
+		if (traceOn) {
+			jdd.tracingStrb.append("\n=== START TRACING ===\n\n");
+		}
 		//jdd.rollTracingFile();
 	}
 	
@@ -728,6 +767,7 @@ public class JournalDataGUI
 					// to enable the editing/insertion of the output journal title
 					mlistTitles.getContents().addElement(gl.lbDummyElementA);
 					mlistTitles.getContents().addElement(gl.lbDummyElementB);
+					mlistTitles.getContents().addElement(jdd.inputTitle);
 					mlistDetails.getContents().addElement(gl.lbErrorMessageA);
 				}
 			}
@@ -762,7 +802,7 @@ public class JournalDataGUI
 		* Now one can calculate jdd.UserDataMatched:
 		*/
 		//Macros.message(currentView, jdd.jd.tracingJdData);
-		//jdd.tracingAccumulator = jdd.jd.tracingJdData;
+		//jdd.tracingAccumulator = jdd.jd.tracingJdData;  //?
 		//jdd.writeAndCloseTracingFile();
 		jdd.rolljnUserDataMatched();
 		jdd.rolljnAllDataMatched();
@@ -893,7 +933,6 @@ public class JournalDataGUI
 				if (buttonAccept.isEnabled()) {
 					actionOnAccept();
 					if (goOnAuto) {
-					  // manuallyAccepted = true;
 						localGoOnAuto = true;
 						actionOnNext();
 						actionOnFindAuto();
@@ -917,6 +956,10 @@ public class JournalDataGUI
 		// @selectedTitle should come from the chosen item in the list mlistTitles
 		// mlistTitlesListSelectionListener
 			//Macros.message(currentView, "jdd.selectedTitle: " + jdd.selectedTitle + "\n");
+		if (traceOn) {
+			jdd.tracingStrb.append("= actionOnAccept = tracing:\n");
+			jdd.tracingStrb.append("jdd.selectedTitle: " + jdd.selectedTitle + "\n");
+		}
 		//String userChoiceControl = "";
 		if (started && allowedButtonAccept) {
 			if (!jdd.selectedTitle.equals("")) {
@@ -931,7 +974,10 @@ public class JournalDataGUI
 				*/
 				jdd.appendUserData();
 				//
-				//jdd.appendTracingAccumulator("Accept");
+				if (traceOn) {
+					jdd.tracingStrb.append("jdd.jnUserData.size() = " + jdd.jnUserData.size() + "\n");
+					jdd.tracingStrb.append("jdd.userChoiceTrace = " + jdd.userChoiceTrace + "\n");
+				}
 				// Control:
 				//Macros.message(currentView, "jdd.jnUserData.size() = " + jdd.jnUserData.size() + "\n");
 				//Macros.message(currentView, jdd.userChoiceTrace);
@@ -1032,6 +1078,7 @@ public class JournalDataGUI
 		by buttons "AUTO" and "NoDots".
 		*/
 		mlistDetails.getContents().addElement(gl.lbMessageStopped);
+		
 	}
 
 	// === AUTO
@@ -1077,15 +1124,10 @@ public class JournalDataGUI
 	public void actionOnDataSourceSelection() {
 		// For any sake make "clear":
 		jdd.jd.clearJournalData();
-
 		//Macros.message(currentView, "1 jdd.jd.jdDataPath = " + jdd.jd.jdDataPath);
-
 		jdd.jd.setDataSource(jdd.selectedSource);
-
 		//Macros.message(currentView, "2 jdd.jd.jdSource = " + jdd.jd.jdSource);
-
 		jdd.jd.rollJournalData();
-
 			// testing:
 		//Macros.message(currentView, "after rollJdData: jdd.jd.jdData.size() = " + jdd.jd.jdData.size());
 		//jdd.jd.rollJdDataASCII();
@@ -1093,13 +1135,10 @@ public class JournalDataGUI
 		//	jdd.jd.rollJdDataSuppl();
 		//	jdd.jd.rollJdDataASCIISuppl();
 		//}
-
 		//Macros.message(currentView, "3 jdd.jd.jdDataPath = " + jdd.jd.jdDataPath);
-
 			// testing:
 		//Macros.message(currentView, "rollout ASCII:      jdd.jd.jdDataASCII.size()      = " + jdd.jd.jdDataASCII.size());
 		//Macros.message(currentView, "rollout ASCIISuppl: jdd.jd.jdDataASCIISuppl.size() = " + jdd.jd.jdDataASCIISuppl.size());
-
 		jdd.jnTitlesMatched.clear();
 		mlistTitles.getContents().removeAllElements();
 		jdd.jnTitleDetails.clear();

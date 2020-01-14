@@ -3,7 +3,7 @@
  * *
  * Part of the JournalTitles plugin for the jEdit text editor
  *
- * Copyright (C) 2008-2013-2019 Z.K.
+ * Copyright (C) 2008-2013-2020 Z.K.
  * zigmas.kr@gmail.com
  *
  * This program is free software; you can redistribute it and/or
@@ -90,8 +90,10 @@ public class JournalDataDynamic {
 	components of JournalDataDynamic object */
 	FileWriter userChoiceFile;
 		// user choice file
-	FileWriter tracingFile;
+	FileWriter tracingFile;  // ?
 		// tracing/debug file
+	boolean isTracingOn;
+	StringBuilder tracingStrb;
 	String userChoiceDataAccumulator;
 	String tracingAccumulator;
 	// strings for messages via Macro.message class ... in GUI
@@ -126,7 +128,9 @@ public class JournalDataDynamic {
 		jnTitleDetails = new ArrayList<String>();
 		//
 		userChoiceDataAccumulator = "";
-		tracingAccumulator = "";
+		tracingAccumulator = "";  // ?
+		isTracingOn = false;
+		tracingStrb = new StringBuilder();
 		//
 		userChoiceFileExceptionMessage = "";
 		tracingFileExceptionMessage = "";
@@ -298,6 +302,8 @@ public class JournalDataDynamic {
 		} catch(IOException io) {
 			tracingFileExceptionMessage = "Tracing:: IOException" + io.getMessage();
 			System.out.println("IOException" + io.getMessage());
+			//
+			tracingStrb.append("Tracing:: IOException" + io.getMessage() + "\n");
 		}
 	}
 
@@ -306,29 +312,29 @@ public class JournalDataDynamic {
 		Other records are possible. too.
 		This is just for tracing/debuging.
 		*/
-		String trA = "";
+		StringBuilder trA = new StringBuilder();
 		if (where.equals("Find")) {
-			trA = trA + "=== On FIND ===\n";
-			trA = trA + "\ntracing jdd :: jnUserData\n\n";
+			trA.append("=== On FIND ===\n");
+			trA.append("\ntracing jdd :: jnUserData\n\n");
 			for (int k = 0; k < jnUserData.size(); k++) {
-				trA = trA + "k=" + k + " [0]: " + jnUserData.get(k).get(0) + "\n";
-				trA = trA + "k=" + k + " [5]: " + jnUserData.get(k).get(5) + "\n";
+				trA.append("k=" + k + " [0]: " + jnUserData.get(k).get(0) + "\n");
+				trA.append("k=" + k + " [5]: " + jnUserData.get(k).get(5) + "\n");
 			}
-			trA = trA + "\n\ntracing jdd :: jnUserDataMatched\n\n";
+			trA.append("\n\ntracing jdd :: jnUserDataMatched\n\n");
 			for (int k = 0; k < jnUserDataMatched.size(); k++) {
-				trA = trA + "k=" + k + " [0]: " + jnUserDataMatched.get(k).get(0) + "\n";
-				trA = trA + "k=" + k + " [5]: " + jnUserDataMatched.get(k).get(5) + "\n";
+				trA.append("k=" + k + " [0]: " + jnUserDataMatched.get(k).get(0) + "\n");
+				trA.append("k=" + k + " [5]: " + jnUserDataMatched.get(k).get(5) + "\n");
 			}
 		} else if (where.equals("Accept")) {
-			trA = trA + "=== On ACCEPT ===\n";
-			trA = trA + "[0]: selectedTitle = " + selectedTitle + "\n";
-			trA = trA + "[1]: =FOUND=" + "\n";
-			trA = trA + "[2]: DB id: " + "\n";
-			trA = trA + "[3]: =user choice=" + "\n";
-			trA = trA + "[4]: ISSN: " + "\n";
-			trA = trA + "[5]: inputTitle = " + inputTitleOrig + "\n\n";
+			trA.append("=== On ACCEPT ===\n");
+			trA.append("[0]: selectedTitle = " + selectedTitle + "\n");
+			trA.append("[1]: =FOUND=" + "\n");
+			trA.append("[2]: DB id: " + "\n");
+			trA.append("[3]: =user choice=" + "\n");
+			trA.append("[4]: ISSN: " + "\n");
+			trA.append("[5]: inputTitle = " + inputTitleOrig + "\n\n");
 		}
-		tracingAccumulator = tracingAccumulator + trA;
+		tracingStrb.append(trA);
 	}
 
 	// Method closes UserChoiceData file:
@@ -340,6 +346,10 @@ public class JournalDataDynamic {
 		}  catch(IOException io) {
 			userChoiceFileExceptionMessage = "UserChoice 5:: IOException" + io.getMessage();
 			System.out.println("IOException" + io.getMessage());
+			//
+			tracingStrb.append("=ERROR in writeAndCloseUserChoiceFile=\n");
+			tracingStrb.append("User Choice File Exception Message:\n" 
+				+ "UserChoice 5:: IOException" + io.getMessage() + "\n");
 		}
 	}
 
