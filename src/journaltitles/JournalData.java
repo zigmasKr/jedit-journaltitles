@@ -62,7 +62,6 @@ public class JournalData {
 		// -- the position in the data string where the "normalized" journal title resides
 	boolean isDataSuppl;
 		// -- the mark that supplemental data are present
-	String tracingJdData;
 	
 	ExtString xs = new ExtString();
 
@@ -73,7 +72,6 @@ public class JournalData {
 	public JournalData() {
 		jdSource = "SerialsDB:SPR"; // "AMS"; 
 		isDataSuppl = false;
-		tracingJdData = "";
 	}
 
 	// data source setter:

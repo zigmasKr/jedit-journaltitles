@@ -706,10 +706,10 @@ public class JournalDataGUI
 		jdd.userChoiceDataAccumulator = "";
 		jdd.rollUserChoiceFile();
 		// TRACING:
+		jdd.tracingStrb.setLength(0);
 		if (traceOn) {
 			jdd.tracingStrb.append("\n=== START TRACING ===\n\n");
 		}
-		//jdd.rollTracingFile();
 	}
 	
 	// === "Find"
@@ -954,10 +954,8 @@ public class JournalDataGUI
 	//
 	public void actionOnAccept() {
 		// @selectedTitle should come from the chosen item in the list mlistTitles
-		// mlistTitlesListSelectionListener
-			//Macros.message(currentView, "jdd.selectedTitle: " + jdd.selectedTitle + "\n");
 		if (traceOn) {
-			jdd.tracingStrb.append("= actionOnAccept = tracing:\n");
+			jdd.tracingStrb.append("\n= actionOnAccept = tracing:\n");
 			jdd.tracingStrb.append("jdd.selectedTitle: " + jdd.selectedTitle + "\n");
 		}
 		//String userChoiceControl = "";
@@ -1069,8 +1067,6 @@ public class JournalDataGUI
 		menuitemAutoPlus.setBackground(Color.GRAY);
 		// user-choice is written down
 		jdd.writeAndCloseUserChoiceFile();
-		// tracing is written down
-		//jdd.writeAndCloseTracingFile();
 		/*
 		The variables bounded to buttons "AUTO" and "NoDots"
 		can be changed by this function, but the state of the buttons 

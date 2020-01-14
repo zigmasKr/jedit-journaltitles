@@ -90,17 +90,11 @@ public class JournalDataDynamic {
 	components of JournalDataDynamic object */
 	FileWriter userChoiceFile;
 		// user choice file
-	FileWriter tracingFile;  // ?
-		// tracing/debug file
 	boolean isTracingOn;
 	StringBuilder tracingStrb;
 	String userChoiceDataAccumulator;
-	String tracingAccumulator;
-	// strings for messages via Macro.message class ... in GUI
 	String userChoiceFileExceptionMessage;
 	//String userChoiceFileCloseExceptionMessage;
-	String tracingFileExceptionMessage;
-	String tracingFileCloseExceptionMessage;
 	String userChoiceWriteExceptionMessage;
 	// the variable for Vancouver mode, vis GUI toggle button "NoDots"
 	boolean isVancouverMode;
@@ -128,16 +122,12 @@ public class JournalDataDynamic {
 		jnTitleDetails = new ArrayList<String>();
 		//
 		userChoiceDataAccumulator = "";
-		tracingAccumulator = "";  // ?
 		isTracingOn = false;
 		tracingStrb = new StringBuilder();
 		//
 		userChoiceFileExceptionMessage = "";
-		tracingFileExceptionMessage = "";
-		tracingFileCloseExceptionMessage = "";
 		//
 		rollUserChoiceFile();
-		//rollTracingFile();
 		//
 		userChoiceTrace = "";
 	}
@@ -293,23 +283,9 @@ public class JournalDataDynamic {
 		}
 	}
 
-	// Method sets tracingFile:
-	public void rollTracingFile() {
-		/* The tracing file is fixed, but one can do this in a more flexible way. */
-		// the @true will append the new data:
-		try {
-			tracingFile = new FileWriter("d:\\temp\\jtc-trace.txt", true);
-		} catch(IOException io) {
-			tracingFileExceptionMessage = "Tracing:: IOException" + io.getMessage();
-			System.out.println("IOException" + io.getMessage());
-			//
-			tracingStrb.append("Tracing:: IOException" + io.getMessage() + "\n");
-		}
-	}
-
 	public void appendTracingAccumulator(String where) {
-		/* Records to tracingAccumulator are done here.
-		Other records are possible. too.
+		/* Records to tracing StringBuilder done here.
+		Other records are possible, too.
 		This is just for tracing/debuging.
 		*/
 		StringBuilder trA = new StringBuilder();
@@ -350,19 +326,6 @@ public class JournalDataDynamic {
 			tracingStrb.append("=ERROR in writeAndCloseUserChoiceFile=\n");
 			tracingStrb.append("User Choice File Exception Message:\n" 
 				+ "UserChoice 5:: IOException" + io.getMessage() + "\n");
-		}
-	}
-
-
-	// Method closes TracingFile:
-	public void writeAndCloseTracingFile() {
-		/* Writes accumulated tracing data and closes the file. */
-		try {
-			tracingFile.write(tracingAccumulator);
-			tracingFile.close();
-		}  catch(IOException io) {
-			tracingFileCloseExceptionMessage = "Tracing Close:: IOException" + io.getMessage();
-			System.out.println("IOException" + io.getMessage());
 		}
 	}
 
