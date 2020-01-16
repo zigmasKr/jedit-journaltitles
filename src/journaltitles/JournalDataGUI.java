@@ -84,7 +84,7 @@ public class JournalDataGUI
 	//static String __date    = "2008.09.15";
 	// ...
 	static String __version = "ver. 0.9.6";
-	static String __date    = "2020.01.14";
+	static String __date    = "2020.01.16";
 
 	//A border that puts 10 extra pixels at the sides and bottom of each pane:
 	Border paneEdge = BorderFactory.createEmptyBorder(0,30,30,30);
@@ -129,6 +129,11 @@ public class JournalDataGUI
 	Selection selectionCurrentJrnlTitle;
 	ArrayList<int[]> jrnlTitlesFoundAll;
 	ArrayList<int[]> jrnlTitlesMarked;
+	//
+	// Additional arrays to introduce "auxiliary" titles.
+	ArrayList<String> dummyAuxiliary;
+	ArrayList<String> dummyOrigTitle;
+	ArrayList<String> dummyNoMatching;
 	//
 	boolean started;
 	// Is "START" already pushed.
@@ -220,6 +225,20 @@ public class JournalDataGUI
 		Therefore comboboxDataSource.setSelectedIndex(0) is commented out - 2014-01-28,
 		see below.
 		*/
+		// dummy titles initialized:
+		dummyAuxiliary = new ArrayList<String>();
+		dummyOrigTitle = new ArrayList<String>();
+		dummyNoMatching = new ArrayList<String>();
+		dummyAuxiliary.add("... ...");
+		dummyAuxiliary.add("=NONE=");
+		dummyAuxiliary.add("Auxiliary line editable");
+		dummyOrigTitle.add("");
+		dummyOrigTitle.add("=ORIG=");
+		dummyOrigTitle.add("Title can be selected to edit and/or accept");
+		dummyNoMatching.add("... ...");
+		dummyNoMatching.add("=NONE=");
+		dummyNoMatching.add("There is no matching titles");
+		//
 		/** GUI components: */
 		buttonStart = new JButton(gl.lbButtonStart);
 		buttonAuto = new JToggleButton(gl.lbButtonAuto);
@@ -732,8 +751,8 @@ public class JournalDataGUI
 	//
 	public void actionOnFind() {
 		jdd.inputTitle = textfInputJournalTitle.getText();
-		// if textfInputJournalTitle.getText() is changed, then one should
-		// be allowed to do another search:
+		// if textfInputJournalTitle.getText() is changed, 
+		// then one should be allowed to do another search:
 		if (!allowedButtonFind &&
 			!previousInputTitle.equals(jdd.inputTitle)) {
 			allowedButtonFind = true;
@@ -744,8 +763,10 @@ public class JournalDataGUI
 			// only if buttonNext has been used, or after the change of the "input title"
 			if (!jdd.inputTitle.equals("")) {
 				jddRollActionsForDataMatched();
-				// With the new data, mlistTitles and mlistDetails 
-				// are rearranged.
+				// original journal title is set in dummyOrigTitle
+				dummyOrigTitle.set(0, jdd.inputTitleOrig);
+				// With the new data, we rearrange
+				// mlistTitles and mlistDetails.
 				if (mlistTitles.getContents().getSize() != 0) {
 					mlistTitles.removeSelectionInterval(jdd.indexTitleSelected, jdd.indexTitleSelected);
 					mlistTitles.getContents().removeAllElements();
@@ -754,29 +775,35 @@ public class JournalDataGUI
 				if (jdd.jnTitlesMatched.size() > 0) {
 					for (int t = 0; t < jdd.jnTitlesMatched.size(); t++) {
 						mlistTitles.getContents().addElement(jdd.jnTitlesMatched.get(t));
-					}
-					// if there is only one 'match', then the additional dummy list entry is added
-					// to enable the editing of this one match
-					if (jdd.jnTitlesMatched.size() == 1) {
-						mlistTitles.getContents().addElement(gl.lbDummyElement);
-					}
+					} 
+					// adding dummy entries to mlistTitles and jdd.jnAllDataMatched
+					mlistTitles.getContents().addElement(dummyAuxiliary.get(0));
+					mlistTitles.getContents().addElement(dummyOrigTitle.get(0));
+					jdd.jnAllDataMatched.add(dummyAuxiliary);
+					jdd.jnAllDataMatched.add(dummyOrigTitle);
 				}
 				else {
-					mlistTitles.getContents().removeAllElements();
-					// if there are no matches, then two additional dummy list entries are added
-					// to enable the editing/insertion of the output journal title
-					mlistTitles.getContents().addElement(gl.lbDummyElementA);
-					mlistTitles.getContents().addElement(gl.lbDummyElementB);
-					mlistTitles.getContents().addElement(jdd.inputTitle);
-					mlistDetails.getContents().addElement(gl.lbErrorMessageA);
+					// adding dummy entries to mlistTitles and jdd.jnAllDataMatched
+					mlistTitles.getContents().addElement(dummyNoMatching.get(0));
+					mlistTitles.getContents().addElement(dummyAuxiliary.get(0));
+					mlistTitles.getContents().addElement(dummyOrigTitle.get(0));
+					jdd.jnAllDataMatched.add(dummyNoMatching);
+					jdd.jnAllDataMatched.add(dummyAuxiliary);
+					jdd.jnAllDataMatched.add(dummyOrigTitle);
 				}
 			}
+			// if for any reason jdd.inputTitle.equals(""); error situation
 			else {
 				mlistTitles.getContents().removeAllElements();
 				mlistDetails.getContents().removeAllElements();
-				mlistTitles.getContents().addElement(gl.lbDummyElementA); // to enable editing/insertion of the output journal title
-				mlistTitles.getContents().addElement(gl.lbDummyElementB);
+				mlistTitles.getContents().addElement(dummyAuxiliary.get(0));
+				mlistTitles.getContents().addElement(" ");
+				jdd.jnAllDataMatched.add(dummyAuxiliary);
+				jdd.jnAllDataMatched.add(dummyOrigTitle);
 				mlistDetails.getContents().addElement(gl.lbErrorMessageB);
+			}
+			if (traceOn) {
+				jdd.appendTracingAccumulator("Find");
 			}
 		}
 		previousInputTitle = jdd.inputTitle;
@@ -802,8 +829,6 @@ public class JournalDataGUI
 		* Now one can calculate jdd.UserDataMatched:
 		*/
 		//Macros.message(currentView, jdd.jd.tracingJdData);
-		//jdd.tracingAccumulator = jdd.jd.tracingJdData;  //?
-		//jdd.writeAndCloseTracingFile();
 		jdd.rolljnUserDataMatched();
 		jdd.rolljnAllDataMatched();
 		jdd.rolljnTitlesMatched();
@@ -975,6 +1000,7 @@ public class JournalDataGUI
 				if (traceOn) {
 					jdd.tracingStrb.append("jdd.jnUserData.size() = " + jdd.jnUserData.size() + "\n");
 					jdd.tracingStrb.append("jdd.userChoiceTrace = " + jdd.userChoiceTrace + "\n");
+					jdd.appendTracingAccumulator("Accept");
 				}
 				// Control:
 				//Macros.message(currentView, "jdd.jnUserData.size() = " + jdd.jnUserData.size() + "\n");
@@ -1087,8 +1113,6 @@ public class JournalDataGUI
 			// there is no sense to introduce a local variable, since its value should be 
 			// assigned to another variable
 			goOnAuto = buttonA.getModel().isSelected();
-			// Control:
-			// Macros.message(currentView, "Auto = " + goOnAuto + "\n");
 		}
 	}
 

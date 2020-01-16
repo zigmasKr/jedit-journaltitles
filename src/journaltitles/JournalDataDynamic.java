@@ -363,8 +363,8 @@ public class JournalDataDynamic {
 		// (4) Ordered data are written back to the UserChoice data file:
 		String userChoiceOrdered = userChoiceLines.get(0) + "\n";
 		for (int d = 1; d < userChoiceLines.size(); d++) {
-			userChoiceOrdered = userChoiceOrdered +
-								 userChoiceLines.get(d) + "\n";
+			userChoiceOrdered = 
+				userChoiceOrdered + userChoiceLines.get(d) + "\n";
 		}
 		try {
 			userChoiceFile.close();

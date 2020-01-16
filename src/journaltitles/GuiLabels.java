@@ -3,7 +3,7 @@
  * *
  * Part of the JournalTitles plugin for the jEdit text editor
  *
- * Copyright (C) 2019 Zigmantas Kryzius
+ * Copyright (C) 2019-2020 Zigmantas Kryzius
  * zigmas.kr@gmail.com
  *
  * This program is free software; you can redistribute it and/or
@@ -75,7 +75,7 @@ public class GuiLabels {
 			lbMenuItemDataGathered = "Data gathered";
 			lbMenuItemAutoPlus = "AUTO+";
 			lbTrace = "TRACE";
-			lbTraceOutput = "TRACE outp.";
+			lbTraceOutput = "TRACE output";
 			lbMenuItemEditTitles = "Edit Titles";
 			lbBorderSearch = "Search";
 			lbLabelInputJournalTitle = "Input journal title:";
@@ -109,7 +109,7 @@ public class GuiLabels {
 			lbMenuItemDataGathered = "Sukaupti duomenys";
 			lbMenuItemAutoPlus = "AUTO+";
 			lbTrace = "SEKTI";
-			lbTraceOutput = "SEKIMO duom.";
+			lbTraceOutput = "SEKIMO duomenys";
 			lbMenuItemEditTitles = "Redaguoti pavadinimus";
 			lbBorderSearch = "Paie\u0161ka";
 			lbLabelInputJournalTitle = "Duotas \u017Eurnalo pavadinimas:";
