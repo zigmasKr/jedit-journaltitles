@@ -69,7 +69,7 @@ import org.gjt.sp.jedit.msg.ViewUpdate;
 import org.gjt.sp.util.Log;
 import org.gjt.sp.jedit.Macros;
 
-import org.gjt.sp.jedit.View;
+//import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.buffer.JEditBuffer;
 import org.gjt.sp.jedit.textarea.Selection;
 
@@ -84,7 +84,7 @@ public class JournalDataGUI
 	//static String __date    = "2008.09.15";
 	// ...
 	static String __version = "ver. 0.9.6";
-	static String __date    = "2020.01.16";
+	static String __date    = "2020.01.17";
 
 	//A border that puts 10 extra pixels at the sides and bottom of each pane:
 	Border paneEdge = BorderFactory.createEmptyBorder(0,30,30,30);
@@ -286,6 +286,7 @@ public class JournalDataGUI
 		mlistTitles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mlistTitles.setLayoutOrientation(JList.VERTICAL);
 		mlistTitles.setVisibleRowCount(8);
+		mlistTitles.setCellRenderer(new LastItemColorCellRenderer());
 		// edit action:
 		edit = new EditListAction();
 		listAction = new ListAction(mlistTitles, edit);
