@@ -224,7 +224,7 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		public void actionPerformed(ActionEvent e) {
 			selectedJrnlTitlesHome =
 				jEdit.getSettingsDirectory() + File.separator + "plugins" +
-				File.separator + "data.journaltitles" + File.separator;
+				File.separator + "journaltitles.data" + File.separator;
 			jrnlTitlesHomePath.setText(selectedJrnlTitlesHome);
 			plugin.setJournalTitlesHome(selectedJrnlTitlesHome);
 		}
@@ -235,7 +235,7 @@ public class JournalTitlesOptionPane extends AbstractOptionPane {
 		public void actionPerformed(ActionEvent e) {
 			selectedJrnlTitlesHome =
 				jEdit.getJEditHome() + File.separator + "plugins" +
-				File.separator + "data.journaltitles" + File.separator;
+				File.separator + "journaltitles.data" + File.separator;
 			jrnlTitlesHomePath.setText(selectedJrnlTitlesHome);
 			plugin.setJournalTitlesHome(selectedJrnlTitlesHome);
 		}
